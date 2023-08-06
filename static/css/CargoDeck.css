@@ -1,0 +1,323 @@
+html, body {
+    background-color: #131313;
+	min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+}
+
+#header {
+	position: sticky;
+    /* position: fixed; */
+	top: 0;
+	z-index: 100;		/* To avoid a Font Awesome problem on some icons.*/
+    background-color: #3367d6;
+    color: #eaeaea;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.logo-card {
+    display: flex;
+    align-items: center;
+	white-space: nowrap; /* Prevents line breaks in text */
+    overflow: hidden; /* Hides any text that doesn't fit */
+    text-overflow: ellipsis; /* Adds "..." when text overflows */
+}	
+}
+
+.logo {
+    width: 48px;
+    height: 48px;
+}
+
+.logo img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+}
+
+
+.logo-title {
+    display: block;
+    height: 48px;
+    margin-left: 10px;
+}
+
+.logo-title span {
+    font-size: .9rem;
+    margin-top: 5px;
+    box-sizing: inherit;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;	
+}
+
+.logo-title h1 {
+    font-size: 2rem;
+    margin-top: -3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;		
+}
+
+#navigation {
+	position: sticky;
+    /* position: fixed; */
+	top: 100px;
+	z-index: 99;		/* To avoid a Font Awesome problem on some icons.*/
+	/* padding-top: 100px; /* header height */	
+    background-color: #4285f4;
+    color: #eaeaea;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+	
+    align-items: flex-start; /* Align items to start when they wrap */
+    width: 100%;
+	box-sizing: border-box;
+    flex-wrap: wrap; /* This will make the items wrap in smaller screens */
+/*
+    align-items: center;
+    height: 40px;
+	width: 100%;
+	box-sizing: border-box;
+*/	
+}
+
+.navigation-left, .navigation-right {
+    display: flex;
+}
+
+.navigation-left a, .navigation-right a {
+    margin-right: 10px;
+	text-decoration: none;
+	
+    /* flex: 1; 			/* Make links take up all available space */
+    /* min-width: 200px; 	/* Set a min-width to trigger the wrapping at a certain point */
+}
+
+.button {
+    background-color: #4285f4;
+    color: #eaeaea;
+    padding: 10px;
+    transition: background-color .3s;
+	display: flex;
+	height: 20px;
+	align-items: baseline;
+    white-space: nowrap;
+	
+    overflow: hidden; 			/* Hide the overflow */
+    text-overflow: ellipsis; 	/* Add an ellipsis when the text overflows */
+}
+
+.button:hover {
+    background-color: #5295f6;
+}
+
+.button.current {
+    background-color: #3175e4;
+}
+
+.text-contents {
+    width: 1000px;
+    max-width: 98%;
+    border-radius: 5px;
+}
+
+.text-heading {
+    background-color: #363636;
+    color: #eaeaea;
+    padding: 10px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+
+
+.text-body, .card {
+    background-color: #2b2b2b;
+    color: #eaeaea;
+    padding: 10px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.cards {
+    width: 1000px;
+    max-width: 98%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+	justify-items: stretch;
+    justify-content: center;
+    align-content: center;
+}
+
+.cards a {
+    display: initial;
+    height: 106px;
+	text-decoration: none;
+}
+
+.card {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    background-color: #2b2b2b;
+    color: #eaeaea;
+    padding: 10px;
+    border-radius: 5px;
+    height: auto;
+}
+
+.card-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 0 0 48px;
+    margin-right: 15px;
+    width: 48px;
+    height: 48px;
+}
+
+.card-icon img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+}
+
+.card-details {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+	max-width: calc(100% - 48px - 15px); /* width of .card-icon and its margin */
+}
+
+.card-missing {
+    color: red;
+}
+
+.section-missing{
+    color: red;
+}
+
+ .section-expected{
+    color: red;
+}
+
+.button-section-missing {
+    color: red;
+}
+
+.button-section-partial {
+    color: orange;
+}
+
+.button-is_link {
+    text-decoration: underline;
+}
+
+.card-details h1, .card-details span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    max-width: 100%;
+    box-sizing: border-box;	
+}
+
+.card-details span {
+	margin-top: -16px;
+	margin-bottom: 16px;
+}
+
+#pre-main {
+	/* margin-top: 140px; /* header height + navigation height */
+    background-color: #131313;
+    color: #eaeaea;
+    padding: 20px;
+    display: flex;
+    justify-content: center;	
+
+	
+    /* position: relative; /* Change to relative */
+    /* top: 160px; /* Adjust top value to accommodate new navigation height */
+}
+
+#main {
+    background-color: #131313;
+    color: #eaeaea;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+#post-main {
+	margin-bottom: 60px; /* footer height + footer padding*/
+    background-color: #131313;
+    color: #eaeaea;
+    padding: 20px;
+    display: flex;
+    justify-content: center;	
+}
+
+#footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;	
+    background-color: #2b2b2b;
+    color: #eaeaea;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    max-height: 40px;
+}
+
+
+@media (prefers-color-scheme:dark) {
+    body, #pre-main, #main, #post-main {
+        background-color: #131313;
+        color: #eaeaea;
+    }
+
+    .text-body, .card, #footer {
+        background-color: #2b2b2b;
+		color: #eaeaea;
+    }
+	
+}
+
+@media (prefers-color-scheme:light) {
+    body, #pre-main, #main, #post-main {
+        background-color: #e7e7e7;
+        color: #363636;
+    }
+
+    .text-body, .card, #footer {
+        background-color: #ffffff;
+		color: #131313;
+    }
+
+    .card:hover {
+        background-color: #f0f0f0;
+    }
+}
+
+@media (max-width: 768px) {
+    .navigation-left, .navigation-right {
+        flex-direction: column;
+    }
+
+    .cards {
+        grid-template-columns: 1fr;
+    }
+}

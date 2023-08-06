@@ -1,0 +1,283 @@
+version: '3.9'
+
+services:
+    CargoDeck:
+        image: cargodeck
+        #container_name: fsteff/cargodeck
+        container_name: CargoDeck
+        restart: unless-stopped
+        ports:  ## Direct access on localhost:port
+            - 9080:80
+            - 9081:81
+        environment:
+            # LOGLEVEL defaults to INFO
+            - LOGLEVEL=INFO
+
+            # Serve more simultanious.
+            - WORKERS=1
+
+            # Multi-instances feature. (Required for PORT2, MATCH2... etc.
+            - INSTANCES=MULTI
+
+            # The number of instances is defined by the highest numeric suffix of a defined PORT environment variable.
+            # The first instance uses PORT1 or PORT (PORT1 has highest priority). Each subsequent instance increases the suffix by 1.
+            # If neither PORT nor PORT1 are not defined, then it defaults to 80. 
+            # Please note that PORTn follows a sequential order (1, 2, 3, ...).
+            # Note: The instances must have their ports opened in the ports section, or defined in a reverse proxy.
+
+            # PORT1 or PORT defines the first instance. Defaults to 80, so need not be stated.
+            # The following PORTn values are set for the following instances. (Note, PORT1 and PORT are checked in that order)
+            #- PORT1=80
+            - PORT2=81
+
+            # Each instance should be set to match different keywords, but will default to the container name.
+            # Like for the PORTn above, the same numbers of n can set the match keyword. (Note, MATCH1 and MATCH are checked in that order)
+            - MATCH1=CargoDeck
+            - MATCH2=Admin
+
+        labels:
+            # Usage of Reverse Proxy, such as Traefik, is highly recommended. 
+            # If used, ensure to comment the port mapping in the ports section above.
+            - "traefik.enable=true"
+            - "traefik.docker.network=traefik"
+
+            # Reverse Proxy for instance 1:           
+            - "traefik.http.services.CargoDeck.loadbalancer.server.port=80"
+            - "traefik.http.routers.CargoDeck.rule=Host(`CargoDeck.company.com`)"
+
+            # Reverse Proxy for instance 2:
+            - "traefik.http.services.Admin.loadbalancer.server.port=81"
+            - "traefik.http.routers.Admin.rule=Host(`Admin.company.com`)"
+            
+            # Remember the hostnames must be added to your DNS.
+            
+            # The following line is commented, but pressented as an example. It depends on my specific Treafik configuration.
+            # It demands users to log in through Azure, and then only allows admin users to access the url. All other users will be redirected to a pre-set URL.
+            #- "traefik.http.routers.Admin.middlewares=traefik-azure-auth,traefik-admins-only"
+
+            #==================================
+            # Site configuration for instance 1: CargoDeck:
+            - "CargoDeck.site_name=CargoDeck - dynamic container inventory (CargoDeck instance)"
+            - "CargoDeck.site_icon=fa fa-university fa-3x"
+            - "CargoDeck.site_footer_text=CargoDeck v0.1"
+            #
+            # Set default icon for all cards.
+            - "CargoDeck.site_default_card_icon=fa-solid fa-dice-d20"
+            #
+            # Set Automatic reload of the page. Specify number of seconds between updates. Minimum 30. Set to 30 if invalid values.
+            - "CargoDeck.site_auto_refresh=60"
+            #
+            # Enable template debug
+            - "CargoDeck.template_debug=Any text can be used, and it's a good place to write why it's enabled."
+            #==================================
+
+            #==================================
+            # Site configuration for instance 2: Admin:
+            - "Admin.site_name=CargoDeck - dynamic container inventory (Admin instance)"
+            - "Admin.site_image=https://www.multiX-wing.com/ftassets/images/logo/logo.svg"
+            - "Admin.site_icon=fa fa-university fa-3x"
+            - "Admin.site_footer_text=CargoDeck v0.1"
+            #
+            # Enable debug info in the template output.
+            - "Admin.template_debug=yes"
+            #==================================
+            
+            #==================================
+            # This CargoDeck application will be listed in the 'index' section of the CargoDeck instance:
+            - "CargoDeck.card_note=CargoDeck - in index section"
+            - "CargoDeck.card_url=http://CargoDeck.company.com"
+            #==================================
+
+            #==================================
+            # This CargoDeck application will be listed in the 'Example' section of the CargoDeck instance:
+            - "CargoDeck.Example.card_note=CargoDeck - in Example section"
+            - "CargoDeck.Example.card_url=http://CargoDeck.company.com"
+            #
+            # This renamed application will be listed in the 'Example' section of the CargoDeck instance:
+            - "CargoDeck.Example.blah.card_name=Blah blah"
+            - "CargoDeck.Example.blah.card_url=https://example.com"
+            - "CargoDeck.Example.blah.card_note=Renamed from blah"
+            #
+            # Tiny decoration for the Example section.
+            - "CargoDeck.Example.section_footer_body=This is a simple footer in the Example section."
+            #==================================
+
+            #==================================
+            # Handeling of wrong sections, missing expected sections or missing expected cards.
+            # These all have defaults:
+
+            # Text and icon used for missing section rendering - slightly similar to 404.
+            - "CargoDeck.site_wrong_section_text=Missing section!"
+            - "CargoDeck.site_wrong_section_icon=fas fa-bugs fa-beat"
+
+            # Text and icon used for missing expected cards rendering
+            - "CargoDeck.site_missing_card_text=Card missing."
+            - "CargoDeck.site_missing_card_icon=fas fa-bugs fa-beat"
+
+            # Text and icon used for missing expected sections.
+            - "CargoDeck.site_expected_section_text=Section expected"
+            - "CargoDeck.site_expected_section_icon=fas fa-bugs fa-beat"
+            #
+            #----------------------------------
+            #
+            # This is a pre-definition, used to warn if a section goes missing.
+            - "CargoDeck.MissingSectionTest.1.section_expected_body=This section was expected from CargoDeck, and should be populated from 'somewhere'...<br>"
+            - "CargoDeck.MissingSectionTest.2.section_expected_body=The numbers in this lable are necessary, as otherwise the labels would be identical, and only the last one would be kept."
+
+            # This is a pre-definition, used to warn if a card goes missing.
+            - "CargoDeck.Info.card_expected_name=MissingCardTest"
+            #==================================
+
+            #==================================
+            # For the CargoDeck instance, Create an Admin section as a direct link, located to the right in the navigation bar.
+            # This will direct you from the CargoDeck instance to the Admin instance
+            - "CargoDeck.display_right=Admin"
+            - "CargoDeck.Admin.section_direct_link=http://localhost:9081/"
+            #==================================
+            #==================================
+            # For the Admin instance, Create an User section as a direct link, located to the right in the navigation bar.
+            # This will direct you from the Admin instance to the CargoDeck instance
+            - "Admin.display_right=User"
+            - "Admin.User.section_direct_link=http://localhost:9080/"
+            #==================================
+
+            #==================================
+            # Create an Info section...
+            - "CargoDeck.Info.section_header=This is the header with icon for the Info tool. This icon is used for navigation, too."
+            - "CargoDeck.Info.section_header_icon=fa fa-exclamation-triangle"
+            - "CargoDeck.Info.4.section_header_body=Adding numbers to the labels, as shown, allows lines to be displayed in the correct order. Alternatively they will be joined in random order.<br>"
+            - "CargoDeck.Info.2.section_header_body=It can be written as multiple lines which will be merged, so that info can come from multiple sources.<br>"
+            - "CargoDeck.Info.1.section_header_body=The section header allows addded some descriptive lines in the info section.<br>"
+            - "CargoDeck.Info.3.section_header_body=It supports html, too, such as <b>bold</b> and <i>italic</i><br>"
+
+            - "CargoDeck.Info.Traefik.card_url=https://traefik.io/traefik/"
+            - "CargoDeck.Info.Traefik.card_image=https://traefik.io/static/traefik-proxy-logo--white-82153be41e0ce620a921b4bce974f6d8.svg"
+            - "CargoDeck.Info.Traefik.card_note=Great Reverse Proxy"
+
+            - "CargoDeck.Info.Homer.card_url=https://homer-demo.netlify.app/#"
+            - "CargoDeck.Info.Homer.card_image=https://homer-demo.netlify.app/logo.png"
+            - "CargoDeck.Info.Homer.card_note=Huge inspiration for this tool."
+
+            - "CargoDeck.Info.section_footer=A footer section with optional icon is also possible."
+            - "CargoDeck.Info.section_footer_icon=fa fa-exclamation-triangle"
+            
+            - "CargoDeck.Info.1.section_footer_body=The section footer follows the sames rules as for the header..<br>"
+            - "CargoDeck.Info.2.section_footer_body=<br>Notice the highlighting of the <b>Info</b> navigation button's section name, to indicate that something needs to be checked, and reveals that the MissingCardTest is missing.<br>"
+            - "CargoDeck.Info.3.section_footer_body=<br>Also notice the highlighting of the <b>MissingSectionTest</b> navigation button's section name. This section ought to have been populated by some other running container, so it must be down for some reason.<br>"
+            #==================================
+
+            #==================================
+            # Create a section that contains links to various Tools sites
+            - "CargoDeck.Tools.Google.card_url=https://google.com"
+            - "CargoDeck.Tools.Google.card_image=https://static-00.iconduck.com/assets.00/google-icon-2048x2048-czn3g8x8.png"
+            - "CargoDeck.Tools.Google.card_note=Esessential serach Tool"
+            
+            # More to come...
+            
+            #==================================
+
+            #==================================
+            # Create a section thats pure text.
+            - "CargoDeck.PureText.section_name=Text only..."
+            - "CargoDeck.PureText.section_header=A header for a text only section"
+            - "CargoDeck.PureText.section_header_icon=fa-solid fa-book"
+            - "CargoDeck.PureText.1.section_header_body=This is a pure text section, where the section name has been renamed.<br>"
+            - "CargoDeck.PureText.2.section_header_body=<br>Blah, blah...<br>"
+
+            - "CargoDeck.PureText.section_footer=Note:"
+            - "CargoDeck.PureText.1.section_footer_body=<br>Blah, Blah, Blah, blah...<br>"
+            - "CargoDeck.PureText.2.section_footer_body=<br>Blah, blah...<br>"
+            #==================================
+
+        networks:
+            - traefik
+        volumes:
+            - cargodeck:/usr/src/app:ro
+            - /var/run/docker.sock:/var/run/docker.sock:ro
+
+    test0:
+        image: traefik/whoami
+        container_name: test0
+        restart: unless-stopped
+        ports:
+            - 6700:80
+        labels:
+            - "Admin.section_header=This admin section can easily have access limitations added using reverse-proxy such as Traefik."
+            - "Admin.section_header_body=<br>Notice that the 'User' button to the right have been redifined, so that it goes straight to another website.<br>"
+
+            - "Admin.card_name=Portainer"
+            - "Admin.card_note=Renamed from 'test0'"
+            - "Admin.card_url=http://localhost:6700/"
+
+            # The below three expectations are the same:
+            #- "Admin.index.Not-Used-Part.card_expected_name=test1"
+            #- "Admin.index.card_expected_name=test1"
+            - "Admin.card_expected_name=test1"
+
+            # To have multiple lines in the footer, they must be numbered as below, requiring the section to be mentioned, too.
+            - "Admin.index.1.section_footer_body=<br>You can try to stop the 'test0' or 'test1' containers, and immidiately see a change after this page is refreshed.<br>"
+            - "Admin.index.2.section_footer_body=<br>The 'test0' or 'test1' containers are expecting each other, so will show a warning if either are missing.<br>"
+            - "Admin.index.2.section_footer_body=<br>To warn about the section missing, add a '.section_expected_body' label somewhere else, such as where the CargoDeck instance is defined.<br>"
+
+    test1:
+        image: traefik/whoami
+        container_name: test1
+        restart: unless-stopped
+        ports:
+            - 6701:80
+        labels:
+            - "Admin.card_note=Still named 'test1'"
+            - "Admin.card_url=http://localhost:6701/"
+            - "Admin.card_expected_name=test0"
+            - "Admin.section_footer_body=<br>This footer text is from 'test1' and also shows up in index. Notice that since it's not numbered, the order of appearence will not be predictable.<br>"
+
+    test2:
+        image: traefik/whoami
+        container_name: test2
+        restart: unless-stopped
+        ports:
+            - 6702:80
+        labels:
+            - "CargoDeck.card_note=Renamed test2 to something very very very long"
+            - "CargoDeck.card_url=http://localhost:6702/"
+            - "CargoDeck.card_name=Was test2 01234567890123456789"
+            - "CargoDeck.section_header_body=This intro text is from 'test2' and shows up in index.<br>"
+
+    test3:
+        image: traefik/whoami
+        container_name: test3
+        restart: unless-stopped
+        ports:
+            - 6703:80
+        labels:
+            - "CargoDeck.card_note=Added Font Awesome icon"
+            - "CargoDeck.card_url=http://localhost:6703/"
+            - "CargoDeck.card_icon=fa fa-university fa-3x"
+            - "CargoDeck.section_header=The container 'test3' adds this section header and section icon."
+            - "CargoDeck.section_header_icon=fa fa-birthday-cake"
+            - "CargoDeck.section_header_body=This intro text is from 'test3' and shows up in index.<br>"
+
+    test4:
+        image: traefik/whoami
+        container_name: test4
+        restart: unless-stopped
+        ports:
+            - 6704:80
+        labels:
+            - "CargoDeck.Another_Section.card_note=test4 in Another_Section"
+            - "CargoDeck.Another_Section.card_url=http://localhost:6704/"
+            - "CargoDeck.Another_Section.section_name=Another Section Without Underscore"
+            - "CargoDeck.Another_Section.section_header_icon=fa fa-balance-scale"
+            - "CargoDeck.Another_Section.1.section_header_body=Made sure the section has a nicer looking name. Added a section header and section icon, too.<br>"
+
+networks:
+    default:
+    traefik:
+        driver: bridge
+        name: traefik
+        external: true
+
+volumes:
+    cargodeck:
+        name: cargodeck
+        driver: local

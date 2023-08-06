@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   version="1.0"
+   width="73.558723"
+   height="74.976372"
+   viewBox="-800 -800 73.558723 74.976372"
+   preserveAspectRatio="xMidYMid"
+   id="svg28"
+   sodipodi:docname="CargoDesk.svg"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs32" />
+  <sodipodi:namedview
+     id="namedview30"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="1.4523973"
+     inkscape:cx="282.63616"
+     inkscape:cy="231.68591"
+     inkscape:window-width="3840"
+     inkscape:window-height="2071"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg28" />
+  <g
+     transform="matrix(0.05,0,0,-0.05,-838.73417,-699.22363)"
+     id="g26">
+    <path
+       d="M 1305,1989 C 561,1789 614,658 1375,531 l 85,-15 v 102 c 0,93 -4,102 -46,102 -146,0 -387,209 -433,376 -84,301 80,617 364,700 l 115,34 v 95 c 0,106 1,106 -155,64 z"
+       id="path18" />
+    <path
+       d="m 1560,1925 v -95 l 115,-34 c 284,-83 448,-399 364,-700 -46,-167 -287,-376 -433,-376 -42,0 -46,-9 -46,-102 V 516 l 85,15 c 766,128 814,1263 61,1459 -153,40 -146,43 -146,-65 z"
+       id="path20" />
+    <path
+       d="m 1373,1710 c -416,-143 -426,-694 -17,-875 114,-50 106,-86 99,440 l -5,461 z"
+       id="path22" />
+    <path
+       d="M 1560,1267 V 797 l 45,14 c 470,145 483,775 18,908 l -63,18 z"
+       id="path24" />
+  </g>
+</svg>

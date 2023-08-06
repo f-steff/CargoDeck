@@ -1,0 +1,63 @@
+CargoDeck - Changes from version 0.1 to version 1.0.0:
+======================================================
+- Must improved second release.
+- Published as an image (https://hub.docker.com/r/fsteff/cargodeck)
+- Published as source: 
+
+
+- Version number now follows Semantic Versioning 2.0.0 (https://semver.org/)
+- Address known vulnerability in the current alpine build. 
+- Follows systems Dark and Light default settings. (Primearly tested in Dark)
+- Added separate support for images or Font Awesome icons to be used for the site logo and the cards.
+  If both image and icon are defined, will prefer image - but if image fails will default to icon.
+- Updated to free unhosted Font Awesome 6.0 - find icons here: https://fontawesome.com/search?o=r&m=free
+- Sections in the navigation bar will use Font Awesome icons - if defined as a section_header_icon.
+- Added optional Multi-instances in one container:
+- Multi-instances: Add the environment variable INSTANCES=MULTI to allows multiple instances of this app to run in the same container, enabeling below. May be instable.
+- Multi-instances: An instance is linked to a specific internal port, set as Env var. PORT1|PORT, PROT2, PORT3...
+- Multi-instances: An instance will match container_name which per default is CargoDocker, alternatives set as Env var. MATCH1|MATCH, MATCH2, MATCH3...
+- Improved the css of the owerall site. Strange visual behavious shoud be a thing of the past.
+- Improved support to small sized screens.
+- Added an optional text section below the cards, too, similar to the optional text section above the cards.
+- If the section requested does not exist, now provide a gentle error instead of 404.
+- Added CargoDeck version number to default string for the footer value and to the log output.
+- Log output now shows instances startup output in the correct order (if used).
+- Log output now shows relavant debug info about template errors.
+- Log output format now follows the same pattern.
+- Template can now print a var_dump() alike variable overview as source comments. Enable for a specific instance using labels: *.template_debug=anything
+- Added an option to set the default Font Awesom icon used for cards.
+- Renamed various label key words for clarity - see explanation and list below.
+- Added an option to expect cards to show up, and if not to warn.
+- Added an option to set a custom text on missing cards.
+- Added an option to set the default Font Awesom icon used for missing cards.
+- Added an option to expect sections to show up, and if not to warn.
+- Added an option to set a custom text on missing sections.
+- Added an option to set the default Font Awesom icon used for missing sections.
+- Navigation buttons now have special styles attached to inform if a section is missing expected cards.
+- Navigation buttons now have special styles attached to inform if a section was expected but is missing.
+- Added *.swection_direct_link, to make a button that a full link, instead of just opening a section.
+- Added css underline to buttons with a direct link.
+
+CargoDeck - Version 0.1
+=======================
+- Very limited first release.
+- Only published as an image (https://hub.docker.com/r/fsteff/cargodeck)
+- Introdused on r/selfhosted (https://www.reddit.com/r/selfhosted/comments/1565vyp/release_cargodeck_dynamic_container_inventory/)
+
+Supports the following Envirenment variables:
+
+* PORT
+* LOGLEVEL
+
+Supports the following labels:
+
+ .sitename		- Header/Title: Text
+ .siteicon		- Header: Add either an image or a Font Awesom 4.0 icon (must start with fa).
+ .header		- Section header: Header text - can contain html, use for <b>, <i>, <color=..> etc.
+ .header_icon	- Section header/Navigation: Add an Font Awesom 4.0 icon to the Section header and Navigation link. (must start with fa)
+ .intro			- Section header: Header body text - can contain html, use for <b>, <i>, <color=..>, <a> etc.	
+ .name			- Card/Navigation: Display a different name than container_name
+ .description	- Card: Add a description to the card
+ .url			- Card: Add a URL to the card.
+ .icon			- Card: Add either an image or a Font Awesom 4.0 icon (must start with fa).
+ .footer		- Footer: Text at the buttom of the screen.

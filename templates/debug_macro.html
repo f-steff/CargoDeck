@@ -1,0 +1,38 @@
+{# A var_dump() macro, implementaion is somewhat similar to the one in php #}
+{# The var_dump macro is available here: https://gist.github.com/f-steff/e1c54b99e2bc28723e9ea2d5ccbd2674 #}
+{% macro var_dump(var, var_name='', space=0, indent='   ') -%}
+    {{ indent * space }}{{ var_name }} => {{"\n"}}
+    {%- if var is string -%}
+        {{ indent * (space + 1) }}string({{ var|length }}): "{{ var }}"{{"\n"}}
+    {%- elif var is number -%}
+        {{ indent * (space + 1) }}int({{ var }}){{"\n"}}
+    {%- elif var is mapping -%}
+        {%- set count = var|length %}
+        {%- if count > 0 -%}
+            {{ indent * (space + 1) }} array({{ count }}) { {{"\n"}}
+            {%- for key, value in var.items() -%}
+                {{ var_dump(value, '' ~ loop.index ~ ': [' ~ key ~ ']', space + 2, indent) }}
+            {%- endfor -%}
+            {{ indent * (space + 1) }} }{{"\n"}}
+        {%- else -%}
+            array(0) {}
+        {%- endif %}
+    {%- elif var is iterable -%}
+        {%- set count = var|length %}
+        {%- if count > 0 -%}
+            {{ indent * (space + 1) }} array({{ count }}) { {{"\n"}}
+            {%- for value in var -%}
+                {{ var_dump(value, '[' ~ loop.index ~ ']', space + 2, indent) }}
+            {%- endfor -%}
+            {{ indent * (space + 1) }} }{{"\n"}}
+        {%- else -%}
+            array(0) {}
+        {%- endif %}
+    {%- elif var is boolean -%}
+        {{ indent * (space + 1) }} bool({{ var }}){{"\n"}}
+    {%- elif var is none -%}
+        {{ indent * (space + 1) }} NULL{{"\n"}}
+    {%- else -%}
+        {{ indent * (space + 1) }} {{ var }}{{"\n"}}
+    {%- endif -%}
+{% endmacro %}

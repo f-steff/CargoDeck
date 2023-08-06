@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+    <title>{{ siteinfo.site_name|default('CargoDeck') }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/CargoDeck.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='js/CargoDeck.js') }}">
+	<link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v6.4.0/css/all.css">
+	{%- if siteinfo.site_auto_refresh|default(false) %}
+	<meta http-equiv="refresh" content="{{siteinfo.site_auto_refresh}}">
+	{%- endif %}
+</head>
+<body>
+	<section id="header">
+		<div class="logo-card">
+			<div class="logo">
+				<a href="#">
+					{#- Macro Description: Load either image or icon. If both are defined, image is prefered. On image error icon is shown. -#}
+					{%- macro display_optimal_logo(image_url, font_awesom_icon) -%}
+						{%- set fa_element = '<span class=\\\'' + font_awesom_icon + ' fa-3x\\\'></span>' -%}
+						{%- if image_url != "" -%}
+							<img src="{{ image_url }}" onerror="this.outerHTML='{{ fa_element|safe }}';" >
+						{%- else -%}
+							{{ fa_element|replace("\\", "")|safe }}
+						{%- endif -%}
+					{%- endmacro -%}
+					{{- display_optimal_logo(siteinfo.site_image|default(url_for('static', filename='images/CargoDesk.svg')), siteinfo.site_icon|default("")) -}}
+				</a>
+			</div>
+			<div class="logo-title">
+				<super>
+				{%- if labels.get(current_name) -%}
+					{{ labels[current_name].section_name|default( labels[current_name].section_name|default(current_name) ) }}
+				{%- else -%}
+					Error
+				{%- endif -%}
+				</super>
+				<h1>{{ siteinfo.site_name|default('CargoDeck') }}</h1>
+			</div>
+		</div>
+	</section>
+
+	<section id="navigation">
+	{%- macro check_missing(details) -%}
+		{#- Loop through all keys - hacked method to return a value from a for-loop scope. -#}
+		{%- set result = [""] -%}
+		{%- for key, detail in details.items() -%}
+			{%- if detail.keys()|length == 2 and 'card_expected_name' in detail and 'card_unique_id' in detail -%}
+				{%- set _ = result.append("button-section-partial") -%}
+			{%- endif -%}
+		{%- endfor -%}
+		{{- result[-1] -}}
+	{%- endmacro -%}
+	
+	{%- macro generate_navigation(labels, section_name, current_name) -%}
+		{%- if labels[section_name].section_direct_link is defined %}
+			<a href="{{ labels[section_name].section_direct_link }}">
+		{%- else %}
+			<a href="{{ url_for('get_labels', name=section_name) }}">
+		{%- endif -%}
+		{%- if labels[section_name].entries is defined -%}
+			{%- set ExtraClasses = check_missing(labels[section_name].entries) -%}
+		{%- else %}
+			{%- set ExtraClasses = "button-section-missing" if labels[section_name].keys()|length == 1 and 'section_expected_body' in labels[section_name] -%}
+		{%- endif %}
+				<span class="button {% if section_name == current_name %}current{% endif -%}  
+									{%- if labels[section_name].section_direct_link is defined %}button-is_link{% endif %} {{ ExtraClasses }}">
+					<span {% if labels[section_name].section_header_icon  %}class="{{ labels[section_name].section_header_icon }}";{% endif %}></span>
+					{{ labels[section_name].section_name|default(section_name) }}
+				</span>
+			</a>
+	{%- endmacro %}
+		<div class="navigation-left">
+		{%- for section_name in labels|sort if section_name != (siteinfo.display_right|default('')) -%}
+			{{ generate_navigation(labels, section_name, current_name) }}
+		{%- endfor %}
+		</div>
+
+		{%- if siteinfo.display_right %}
+		<div class="navigation-right">
+			{%- for section_name in labels|sort if section_name == (siteinfo.display_right|default('')) -%}
+				{{ generate_navigation(labels, section_name, current_name) }}
+			{%- endfor %}
+		</div>
+		{%- endif %}
+	</section>
+
+	<section id="pre-main">
+		<div class="text-contents">
+		{%- if labels.get(current_name) and labels[current_name].keys()|length == 1 and 'section_expected_body' in labels[current_name] -%}
+			{#- Section was expected but does not exist and cannot be rendered. -#}
+			{%- set pm_class = "section-expected" -%}
+			{%- set pm_icon = siteinfo.site_expected_section_icon|default('fa fa-chain-broken') -%}
+			{%- set pm_header =  "Section was expected..." -%}
+			{%- set pm_body = labels[current_name].section_expected_body|safe|default('Section was expected but does not exist.', true) -%}
+		{%- elif not labels.get(current_name) -%}
+			{#-- Section does not exist and cannot be rendered. -#}
+			{%- set pm_class = "section-missing" -%}
+			{%- set pm_icon = siteinfo.site_wrong_section_icon|default('fa fa-chain-broken') -%}
+			{%- set pm_header = current_name -%}
+			{%- set pm_body =  siteinfo.site_wrong_section_text|safe|default('Section does not exist.', true) -%}
+		{%- else -%}
+			{#- Section exists and can be rendered. -#}
+			{%- set pm_class = "" -%}
+			{%- set pm_icon = labels[current_name].section_header_icon|default('') -%}
+			{%- set pm_header = labels[current_name].section_header|safe|default('') -%}
+			{%- set pm_body =  labels[current_name].section_header_body|safe|default("") -%}
+		{%- endif %}
+			
+		{%- if pm_icon != "" or pm_header != "" %}
+			<div class="text-heading {{ pm_class}}">
+				{% if pm_icon != "" -%}<span class="{{ pm_icon }}">&nbsp;</span>{%- endif %}
+				{% if pm_header != "" -%}{{ pm_header }}{%- endif %}
+			</div>
+			{%- if pm_body != "" %}
+			<div class="text-body">
+				{{ pm_body }}
+			</div>
+			{%- endif %}
+		{%- endif %}
+		</div>
+	</section>
+											
+	<section id="main">
+		<div class="cards">
+		{%- if labels.get(current_name) and 'entries' in labels[current_name] -%}
+			{%- for key, details in labels[current_name].entries.items()|sort -%}
+				{%- if details.keys()|length == 2 and 'card_expected_name' in details and 'card_unique_id' in details -%}
+					{%- set c_class = " card-missing" -%}
+					{%- set c_icon = display_optimal_logo("", siteinfo.site_missing_card_icon|default("fas fa-bugs")) -%}
+					{%- set c_name = details.card_expected_name -%}
+					{%- set c_note = siteinfo.site_missing_card_text|default('Offline. Is the container running?') -%}
+				{%- else -%}
+					{%- set c_class = "" -%}
+					{%- set c_icon = display_optimal_logo(details.card_image|default(""), details.card_icon|default(siteinfo.site_default_card_icon|default("fas fa-puzzle-piece")) ) %}
+					{%- set c_name = details.card_name|default(key) -%}
+					{%- set c_note = details.card_note|default(' ') -%}
+				{%- endif %}
+			<a href="{{ details.card_url }}">
+				<div class="card">
+					<div class="card-icon {{c_class}}">
+						{{ c_icon }}
+					</div>
+					<div class="card-details {{ c_class }}">
+						<h1 title="{{ c_name }}">{{ c_name }}</h1>
+						<span title="{{ c_note }}">{{ c_note }}</span>
+					</div>
+				</div>			
+			</a>
+			{%- endfor -%}
+		{%- endif %}
+		</div>
+	</section>
+	
+	<section id="post-main">
+		<div class="text-contents">
+		{%- if labels.get(current_name) and ( labels[current_name].section_footer or labels[current_name].section_footer_body ) %}
+			{%- if labels[current_name].section_footer or labels[current_name].section_footer_icon %}
+			<div class="text-heading">
+				<span class="{{ labels[current_name].section_footer_icon|default('') }}">&nbsp;</span>
+				{{ labels[current_name].section_footer|safe|default('') }}
+			</div>
+			{%- endif %}
+			{%- if labels[current_name].section_footer_body %}
+			<div class="text-body">
+				{{ labels[current_name].section_footer_body|safe }}
+			</div>
+			{%- endif %}
+		{%- endif %}
+		</div>
+	</section>	
+
+	<section id="footer">
+		<div class="centered-footer">
+			{{ (siteinfo.site_footer_text if siteinfo.footer_text else "CargoDeck " + siteinfo.version)|safe }}
+			{%- if siteinfo.site_auto_refresh|default(false) -%}
+			   &nbsp;&nbsp;( Auto update {{ siteinfo.site_auto_refresh }}s enabled )
+			{%- endif %}
+		</div>
+	</section>
+	
+{%- if siteinfo.get('template_debug') -%} 
+{#- NOTE: The commented out html is used for debug, and will be rendered if requested. #}
+<!--
+{% import 'debug_macro.html' as debug %}
+
+{{ debug.var_dump(current_name, 'current_name') }}
+
+{{ debug.var_dump(siteinfo, '[siteinfo]') }}
+
+{{ debug.var_dump(labels, '[labels]') }}
+-->
+{%- endif %}
+</body>
+</html>
