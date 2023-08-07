@@ -1,3 +1,11 @@
+CargoDeck - Changes from version 1.0.0 to version 1.0.1:
+========================================================
+
+- Added example of bind mount.
+- Updated the startup script, so that if the bind mounted folder is empty, all the necessary (source and template) files will be copied there.
+- Updated on both repository and docker hub.
+
+
 CargoDeck - Changes from version 0.1 to version 1.0.0:
 ======================================================
 - Must improved second release.
@@ -37,6 +45,7 @@ CargoDeck - Changes from version 0.1 to version 1.0.0:
 - Navigation buttons now have special styles attached to inform if a section was expected but is missing.
 - Added *.swection_direct_link, to make a button that a full link, instead of just opening a section.
 - Added css underline to buttons with a direct link.
+
 
 CargoDeck - Version 0.1
 =======================

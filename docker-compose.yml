@@ -192,7 +192,7 @@ services:
         networks:
             - traefik
         volumes:
-            - cargodeck:/usr/src/app:ro
+            - cargodeck:/usr/src/app
             - /var/run/docker.sock:/var/run/docker.sock:ro
 
     test0:
@@ -281,3 +281,8 @@ volumes:
     cargodeck:
         name: cargodeck
         driver: local
+# If using bind-mounted volume, uncomment the following, and edit the device path
+#        driver_opts:
+#            type: none
+#            o: bind
+#            device: ./bindMounted/Path
