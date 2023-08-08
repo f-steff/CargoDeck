@@ -192,8 +192,13 @@ services:
         networks:
             - traefik
         volumes:
-            - cargodeck:/usr/src/app
             - /var/run/docker.sock:/var/run/docker.sock:ro
+            
+            # Use a volume mounted to expose the source and template files for editing.
+            - cargodeck:/usr/src/app
+            # Alternative, use a bind-mounted volume (and remove the volume section at the buttom of this file)
+            # If using bind-mounted volume, uncomment the following, and edit the device path to fit your needs.
+            #- ./bindmounted_volume:/usr/src/app
 
     test0:
         image: traefik/whoami
@@ -281,8 +286,3 @@ volumes:
     cargodeck:
         name: cargodeck
         driver: local
-# If using bind-mounted volume, uncomment the following, and edit the device path
-#        driver_opts:
-#            type: none
-#            o: bind
-#            device: ./bindMounted/Path
