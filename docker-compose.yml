@@ -42,11 +42,13 @@ services:
             - "traefik.docker.network=traefik"
 
             # Reverse Proxy for instance 1:           
-            - "traefik.http.services.CargoDeck.loadbalancer.server.port=80"
             - "traefik.http.routers.CargoDeck.rule=Host(`CargoDeck.company.com`)"
+            - "traefik.http.routers.CargoDeck.service=CargoDeck"
+            - "traefik.http.services.CargoDeck.loadbalancer.server.port=80"
 
             # Reverse Proxy for instance 2:
             - "traefik.http.services.Admin.loadbalancer.server.port=81"
+            - "traefik.http.routers.Admin.service=Admin"
             - "traefik.http.routers.Admin.rule=Host(`Admin.company.com`)"
             
             # Remember the hostnames must be added to your DNS.
